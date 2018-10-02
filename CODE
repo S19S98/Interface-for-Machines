@@ -1,0 +1,152 @@
+//this is a C++ CODE
+
+#include <iostream>
+#include<cmath>
+using namespace std;
+
+void solveDCMACHINE(double P,double eff,double Bav,double ac,double Rltoc,double poles,double n)
+{
+	if ((Bav==0) && (ac==0))
+	{
+		double Pa=P/eff;                                           //Power developed in armature in kW
+		double Co=(((3.14*3.14)*0.48*28000)/(10*10*10));          //output coefficient (Also assuming the standard values of Bav and ac for calculations)
+		double x=Pa/(Co*(n/60));
+		double y=(Rltoc*3.14)/poles;
+		
+		double D=cbrt(x/y);
+		double L=y*D;
+		cout<<"Armature Power:"<<Pa<<endl<<"Output co-efficient:"<<Co<<endl<<"Diameter:"<<D<<endl<<"Length:"<<L<<endl;
+	}
+	else
+	{
+		double Pa=P/eff;                                           //Power developed in armature in kW
+		double Co=(((3.14*3.14)*Bav*ac)/(10*10*10));              //output coefficient
+		double x=Pa/(Co*(n/60));
+		double y=(Rltoc*3.14)/poles;
+		
+		double D=cbrt(x/y);
+		double L=y*D;
+		cout<<"Armature Power:"<<Pa<<endl<<"Output co-efficient:"<<Co<<endl<<"Diameter:"<<D<<endl<<"Length:"<<L<<endl;
+	}	
+}
+
+void solveTRANSFORMER(double output,double eff,double pf,double f,double poles,double Bav,double ac,double Kws)
+{
+	if ((Bav==0) && (ac==0) && (Kws==0))
+	{
+		double Q=output/(eff*pf);
+		double ns=(2*f)/poles;
+		double Kws=0.955;
+		double Co=((11*Kws*0.48*28000)/(10*10*10));
+		double x=Q/(Co*ns);
+		double y=3.14/poles;
+		double D=cbrt(x/y);
+		double L=y*D;
+		cout<<"kVA input:"<<Q<<endl<<"Output co-efficient:"<<Co<<endl<<"Diameter:"<<D<<endl<<"Length:"<<L<<endl;
+	}
+	else
+	{
+		double Q=output/(eff*pf);
+		double ns=(2*f)/poles;
+		double Co=((11*Kws*Bav*ac)/(10*10*10));
+		double x=Q/(Co*ns);
+		double y=3.14/poles;
+		double D=cbrt(x/y);
+		double L=y*D;
+		cout<<"kVA input:"<<Q<<endl<<"Output co-efficient:"<<Co<<endl<<"Diameter:"<<D<<endl<<"Length:"<<L<<endl;
+	}
+
+}
+
+int main()
+{
+    int n;
+	cout<<"Choose the required operation:\n"<<"1-TRANSFORMER\n"<<"2-DC MACHINE\n"<<"3-IMR\n";
+    cout<<"Choose your option (n)\n";
+	cin>>n;
+    if(n==1)
+    {
+    	double Q,Vin,Vout,J,f,Bm,K,Et,Ai,Agi,a,b,Dy,Hy,Aw,Kw;
+    	cout<<"Enter the value of Q:";
+    	cin>>Q;
+    	cout<<"Enter the value of Vin:";
+    	cin>>Vin;
+    	cout<<"Enter the value of Vout:";
+    	cin>>Vout;
+    	cout<<"Enter the value of J:";
+    	cin>>J;
+    	cout<<"Enter the value of f:";
+    	cin>>f;
+    	cout<<"Enter the value of Bm:";
+    	cin>>Bm;
+    	cout<<"Enter the value of K:";
+    	cin>>K;
+    	cout<<"Enter the value of Et:";
+    	cin>>Et;
+    	cout<<"Enter the value of Kw:";
+    	cin>>Kw;
+		Ai = Et/(4.44*f*Bm);   //Area of iron core
+		Agi = Ai/K;           //Gross iron area
+		
+		cout<<"Area of iron core:"<<Ai<<endl;
+		cout<<"Gross iron area:"<<Agi<<endl;
+		
+		//as Agi = b*2a and b = 2.5 2a = 5a
+		a = sqrt(Agi/5);   //Width of central limb 2a
+		b = 5*a;   //Core depth b
+		Dy = a;    //Depth of Yoke Dy
+		Hy = b;    //Height of Yoke Hy
+		Aw = Q/(2.22*f*Bm*Ai*Kw*J);  //Area of window Aw
+		
+		cout<<"Area of Window"<<Aw<<endl;
+	}
+	
+	else if(n==2)
+	{
+		double P,eff,Bav,ac,Rltoc,poles,n;
+		cout<<"Enter the value of P:";         //in kiloWatts kW
+		cin>>P;
+		cout<<"Enter the value of eff:";
+		cin>>eff;
+		cout<<"Enter the value of Bav:";
+		cin>>Bav;
+		cout<<"Enter the value of ac:";
+		cin>>ac;
+		cout<<"Enter the value of Rltoc:";
+		cin>>Rltoc;
+		cout<<"Enter the value of poles:";
+		cin>>poles;
+		cout<<"Enter the value of n:";
+		cin>>n;
+		
+		solveDCMACHINE(P,eff,Bav,ac,Rltoc,poles,n);
+	}
+	
+	else if(n==3)
+	{
+		double output,eff,pf,f,poles,Bav,ac,Kws;
+		cout<<" if certain values like Bav, ac, Kws are not mentioned provide as 0. Calculator will take the standard values for calculations."<<endl;
+		cout<<"Enter the value of output:";  //in kiloWats kW
+		cin>>output;
+		cout<<"Enter the value of eff:";
+		cin>>eff;
+		cout<<"Enter the value of pf:";
+		cin>>pf;
+		cout<<"Enter the value of f:";
+		cin>>f;
+		cout<<"Enter the value of poles:";
+		cin>>poles;
+		cout<<"Enter the value of Bav:";
+		cin>>Bav;
+		cout<<"Enter the value of ac:";
+		cin>>ac;
+		cout<<"Enter the value of Kws:";
+		cin>>Kws;
+		
+		solveTRANSFORMER(output,eff,pf,f,poles,Bav,ac,Kws);
+	}
+	else
+	{
+		cout<<"Enter a valid number";
+	}
+}
